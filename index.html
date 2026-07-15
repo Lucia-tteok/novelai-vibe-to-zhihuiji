@@ -86,8 +86,7 @@ body.gate-locked{overflow:hidden}
         <p class="gate-text">此网站链接仅在 Discord 服务器“尾巴镇”发布。请不要二传、转发、搬运到其他平台，也不要截图外传或打包分享链接。请尊重作者和服务器内的使用范围。</p>
         <div class="gate-author">作者：毫无疑问你就是我的天使</div>
         <label class="input-group" for="gateInput">请输入确认句后进入</label>
-        <input id="gateInput" class="gate-input" autocomplete="off" placeholder="我绝对不会二传，二传穷三代">
-        <p class="gate-hint">确认句：我绝对不会二传，二传穷三代</p>
+        <input id="gateInput" class="gate-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="text" placeholder="我绝对不会二传，二传穷三代">
         <button id="gateConfirm" class="btn" type="button">确认进入</button>
         <div id="gateError" class="gate-error" aria-live="polite"></div>
     </div>
@@ -164,7 +163,7 @@ function openGate(){if(!gate||gateGet())return;gate.classList.add('show');docume
 function closeGate(){gateSet();gate.classList.remove('show');document.body.classList.remove('gate-locked')}
 function checkGate(){const ok=(gateInput.value||'').trim()===gatePhrase;if(ok)closeGate();else{gateError.textContent='请输入完整确认句后才能进入。';gateInput.focus()}}
 if(gateConfirm)gateConfirm.onclick=checkGate;
-if(gateInput)gateInput.addEventListener('keydown',e=>{if(e.key==='Enter')checkGate();else gateError.textContent=''})
+if(gateInput){gateInput.addEventListener('keydown',e=>{if(e.key==='Enter')checkGate();else gateError.textContent=''});['paste','copy','cut','drop','dragover','contextmenu'].forEach(t=>gateInput.addEventListener(t,e=>{e.preventDefault();gateError.textContent='请手动输入确认句，不能复制粘贴。'}));}
 openGate();
 })();
 pick.onclick=()=>file.click();file.onchange=()=>handle(file.files[0]);function defaultPreviewName(){return group.value.trim()||'PRIVATE VIBE'}function syncPreviewText(){if(!previewTextDirty)previewText.value=defaultPreviewName()}function previewName(){return previewText.value.trim()||defaultPreviewName()}function togglePrivacyText(){privacyBox.classList.toggle('active',replacePreview.checked);if(replacePreview.checked)syncPreviewText()}group.addEventListener('input',syncPreviewText);previewText.addEventListener('input',()=>{previewTextDirty=true});replacePreview.onchange=togglePrivacyText;syncPreviewText();togglePrivacyText();clear.onclick=()=>{parsed=null;file.value='';go.disabled=true;replacePreview.checked=false;previewTextDirty=false;previewText.value=defaultPreviewName();togglePrivacyText();msg('等待选择文件。')};go.onclick=run;['dragenter','dragover'].forEach(e=>drop.addEventListener(e,x=>{x.preventDefault();drop.classList.add('drag')}));['dragleave','drop'].forEach(e=>drop.addEventListener(e,x=>{x.preventDefault();drop.classList.remove('drag')}));drop.addEventListener('drop',e=>handle(e.dataTransfer.files[0]));function msg(t,c=''){st.textContent=t;st.className='status '+c}async function handle(f){try{if(!f)return;parsed=JSON.parse(await f.text());let vs=vibes(parsed);if(!vs.length)throw Error('没找到 vibes');go.disabled=false;msg(`已读取：${f.name}
