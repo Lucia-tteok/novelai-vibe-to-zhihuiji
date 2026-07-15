@@ -1,170 +1,31 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vibe 转换器</title><style>
-body{font-family:"Nunito","Quicksand",system-ui,-apple-system,sans-serif;margin:0;padding:0;background:#fdf2f8;color:#7e4a5d;background-image:radial-gradient(circle at top right,#fffaf0,#ffd1dc);min-height:100vh;display:flex;align-items:center;justify-content:center}
-.wrap{width:100%;max-width:880px;margin:20px;display:flex;flex-direction:column;gap:24px}
-.header{text-align:center;margin-bottom:10px}
-h1,h2{color:#e84a5f;text-shadow:2px 2px 0px #fff,4px 4px 0px #ffd1dc;letter-spacing:1px;font-weight:900;margin:0}
-h1{font-size:2.4em;margin-bottom:8px}
-h2{font-size:1.4em;text-align:left;text-shadow:1px 1px 0px #fff,2px 2px 0px #ffd1dc;margin-bottom:16px;border-bottom:2px dashed #ffb7c5;padding-bottom:8px;display:inline-block}
-p{line-height:1.6;margin-top:0}
-.subtitle{font-weight:600;color:#c2185b;font-size:1.1em;background:rgba(255,255,255,0.6);padding:16px 24px;border-radius:20px;display:inline-block;border:2px solid #fff;box-shadow:0 4px 12px rgba(255,183,197,0.3);line-height:2.2;word-wrap:break-word}
-.card{background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);border:3px solid #ffb7c5;border-radius:28px;padding:32px;box-shadow:0 16px 40px rgba(255,183,197,0.4),inset 0 0 0 4px #fff;transition:transform 0.3s ease}
-.card:hover{transform:translateY(-2px);box-shadow:0 20px 48px rgba(255,183,197,0.5),inset 0 0 0 4px #fff}
-.drop{border:4px dashed #ff9eb5;border-radius:24px;padding:48px 32px;text-align:center;background:repeating-linear-gradient(45deg,#fff0f5,#fff0f5 10px,#fffaf0 10px,#fffaf0 20px);transition:all 0.3s;cursor:pointer;box-shadow:inset 0 0 20px rgba(255,183,197,0.3);position:relative;overflow:hidden}
-.drop::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,0);transition:background 0.3s;pointer-events:none}
-.drop:hover::after{background:rgba(255,255,255,0.2)}
-.drop p{font-size:1.2em;color:#e84a5f;font-weight:bold;margin-bottom:24px}
-.drag{background:#ffd1dc;border-color:#e84a5f;transform:scale(1.02)}
-.actions{display:flex;gap:24px;margin-top:32px;justify-content:center;align-items:center}
-.btn{white-space:nowrap;border:3px solid #fff;border-radius:999px;padding:16px 36px;font-size:17px;font-weight:800;color:#fff;background:linear-gradient(135deg,#ff9eb5,#ffb7c5);cursor:pointer;transition:all 0.3s cubic-bezier(0.25,0.8,0.25,1);box-shadow:0 8px 20px rgba(255,158,181,0.4);text-shadow:0 1px 2px rgba(232,74,95,0.4);letter-spacing:1px;position:relative;overflow:hidden}
-.btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent);transition:left 0.5s}
-.btn:hover:not(:disabled)::before{left:100%}
-.btn:hover:not(:disabled){transform:translateY(-4px) scale(1.03);background:linear-gradient(135deg,#ffb7c5,#ffe082);box-shadow:0 12px 28px rgba(255,224,130,0.6),0 0 0 4px rgba(255,255,255,0.8);color:#d81b60;border-color:#fff}
-.btn:active:not(:disabled){transform:translateY(1px)}
-.btn:disabled{opacity:.65;box-shadow:none;background:#fce4ec;border-color:#ffe4e8;color:#f48fb1;text-shadow:none;cursor:not-allowed}
-.sec{color:#e84a5f;background:#fff;border:3px solid #ffb7c5;box-shadow:0 4px 12px rgba(255,183,197,0.2);text-shadow:none}
-.sec:hover:not(:disabled){background:#fff0f5;color:#c2185b;border-color:#ff9eb5}
-.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-top:24px}
-.input-group{display:flex;flex-direction:column;gap:8px}
-.privacy-box{margin-top:24px;padding:20px;border:3px solid #ffe4e8;border-radius:22px;background:rgba(255,250,251,0.82);box-shadow:inset 0 2px 8px rgba(255,183,197,0.14),0 6px 16px rgba(255,255,255,0.45)}
-.check-line{display:flex;align-items:center;gap:12px;color:#d81b60;font-weight:900;font-size:1.06em;cursor:pointer;user-select:none}
-.check-line input{width:22px;height:22px;accent-color:#ff9eb5;box-shadow:none;flex:0 0 auto}
-.privacy-text{display:none;margin-top:14px}.privacy-box.active .privacy-text{display:block}
-.hint{margin:10px 4px 0;color:#9d6477;font-size:.95em;line-height:1.6;font-weight:600}
-label{font-weight:800;color:#e84a5f;font-size:1.05em;margin-left:4px}
-.status{white-space:pre-wrap;background:rgba(255,255,255,0.8);border:3px solid #ffe4e8;border-radius:20px;padding:20px;margin-top:24px;color:#8e5568;box-shadow:inset 0 3px 8px rgba(255,183,197,0.2),0 4px 12px rgba(255,255,255,0.5);font-weight:600;text-align:center;font-size:1.1em;transition:all 0.3s}
-.ok{color:#d81b60;background:#fce4ec;border-color:#f8bbd0}
-.err{color:#fff;background:#ef5350;border-color:#e53935}
-input[type=file]{display:none}
-select{width:100%;padding:16px 20px;border:3px solid #ffe4e8;border-radius:18px;box-sizing:border-box;background:#fffafb;color:#7e4a5d;font-size:16px;transition:all 0.3s;font-weight:800;box-shadow:inset 0 2px 5px rgba(255,183,197,0.1)}
-select:focus{outline:none;border-color:#ffdf00;background:#fff;box-shadow:0 0 0 5px rgba(255,223,0,0.2),inset 0 2px 5px rgba(255,223,0,0.1)}
-input{width:100%;padding:16px 20px;border:3px solid #ffe4e8;border-radius:18px;box-sizing:border-box;background:#fffafb;color:#7e4a5d;font-size:16px;transition:all 0.3s;font-weight:700;box-shadow:inset 0 2px 5px rgba(255,183,197,0.1)}
-input:focus{outline:none;border-color:#ffdf00;background:#fff;box-shadow:0 0 0 5px rgba(255,223,0,0.2),inset 0 2px 5px rgba(255,223,0,0.1);transform:translateY(-1px)}
-input::placeholder{color:#d1a3b4;font-weight:500}
-.check-line input[type=checkbox]{width:22px;height:22px;padding:0;border:2px solid #ffb7c5;border-radius:6px;box-shadow:none;background:#fff;flex:0 0 auto}
-ul{margin:0;padding-left:24px;display:flex;flex-direction:column;gap:12px}
-li{line-height:1.6;color:#8e5568}
-li::marker{color:#ff9eb5}
-code{background:#fff0f5;padding:2px 8px;border-radius:8px;color:#e84a5f;font-family:monospace;border:1px solid #ffb7c5;font-weight:bold;font-size:0.9em;margin:0 2px;white-space:nowrap}
-@media(max-width:700px){.row{grid-template-columns:1fr}.wrap{margin:16px;gap:16px}.card{padding:24px}.drop{padding:32px 20px}}
-@media(prefers-color-scheme:dark){
-body{background:#2b1820;color:#ffb7c5;background-image:radial-gradient(circle at top right,#3d212b,#2b1820)}
-.subtitle{font-weight:600;color:#c2185b;font-size:1.1em;background:rgba(255,255,255,0.6);padding:16px 24px;border-radius:20px;display:inline-block;border:2px solid #fff;box-shadow:0 4px 12px rgba(255,183,197,0.3);line-height:2.2;word-wrap:break-word}
-.card{background:rgba(54,31,42,0.85);border-color:#7a465d;box-shadow:0 16px 40px rgba(0,0,0,0.5),inset 0 0 0 4px #2b1820}
-.drop{background:repeating-linear-gradient(45deg,#361f2a,#361f2a 10px,#2b1820 10px,#2b1820 20px);border-color:#d81b60;box-shadow:inset 0 0 20px rgba(0,0,0,0.5)}
-.sec{background:#361f2a;color:#ffb7c5;border-color:#7a465d}
-.sec:hover:not(:disabled){background:#4a2b3b;color:#ff9eb5;border-color:#d81b60}
-input,select{background:#361f2a;color:#fff0f5;border-color:#5c3546}
-input:focus,select:focus{border-color:#ffb7c5;background:#4a2b3b;box-shadow:0 0 0 5px rgba(255,183,197,0.15),inset 0 2px 5px rgba(0,0,0,0.2)}
-input::placeholder{color:#7a465d}
-.status{background:#361f2a;color:#ffb7c5;border-color:#5c3546;box-shadow:inset 0 3px 8px rgba(0,0,0,0.3),0 4px 12px rgba(0,0,0,0.2)}
-code{background:#fff0f5;padding:2px 8px;border-radius:8px;color:#e84a5f;font-family:monospace;border:1px solid #ffb7c5;font-weight:bold;font-size:0.9em;margin:0 2px;white-space:nowrap}
-h1,h2{color:#ffb7c5;text-shadow:2px 2px 0px #402532,4px 4px 0px #1a0f13}
-h2{border-bottom-color:#7a465d}
-li{color:#d1a3b4}
-li::marker{color:#d81b60}
-}
-
-.first-gate{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:24px;background:radial-gradient(circle at top right,rgba(255,250,240,.98),rgba(255,209,220,.96) 45%,rgba(253,242,248,.98));backdrop-filter:blur(10px);overflow:auto}
-.first-gate.show{display:flex}
-body.gate-locked{overflow:hidden}
-.gate-card{width:min(720px,100%);background:rgba(255,255,255,.92);border:3px solid #fff;border-radius:34px;padding:34px;box-shadow:0 24px 70px rgba(232,74,95,.25),inset 0 0 0 6px rgba(255,209,220,.65);position:relative;text-align:center;color:#7e4a5d}
-.gate-card:before,.gate-card:after{content:"";position:absolute;border-radius:999px;background:linear-gradient(135deg,#fffaf0,#ffd1dc);box-shadow:0 0 0 4px rgba(255,255,255,.8),0 10px 24px rgba(232,74,95,.18)}
-.gate-card:before{width:72px;height:72px;right:28px;top:-30px}
-.gate-card:after{width:38px;height:38px;left:36px;bottom:-16px}
-.gate-title{font-size:1.8em;margin:0 0 18px;color:#e84a5f;text-shadow:2px 2px 0 #fff,4px 4px 0 #ffd1dc;font-weight:900;letter-spacing:1px}
-.gate-text{font-weight:700;line-height:2;color:#9c3656;background:rgba(255,240,245,.75);border:2px dashed #ffb7c5;border-radius:22px;padding:18px;margin:0 0 18px;text-align:left}
-.gate-author{display:inline-block;margin:4px 0 20px;padding:10px 18px;border-radius:999px;background:#fffaf0;border:2px solid #ffd1dc;color:#c2185b;font-weight:900;box-shadow:0 6px 18px rgba(255,183,197,.25)}
-.gate-input{width:100%;box-sizing:border-box;text-align:center;font-weight:800;font-size:1.02em}
-.gate-hint{font-size:.92em;color:#b85b78;margin:10px 0 16px;line-height:1.7}
-.gate-error{min-height:1.5em;color:#e84a5f;font-weight:800;margin:8px 0 0}
-@media (prefers-color-scheme:dark){.first-gate{background:radial-gradient(circle at top right,rgba(64,37,50,.98),rgba(26,15,19,.98))}.gate-card{background:rgba(54,31,42,.96);border-color:#7a465d;color:#ffdae5;box-shadow:0 24px 70px rgba(0,0,0,.55),inset 0 0 0 6px #2b1820}.gate-title{color:#ffb7c5;text-shadow:2px 2px 0 #402532,4px 4px 0 #1a0f13}.gate-text{background:#361f2a;border-color:#7a465d;color:#ffd1dc}.gate-author{background:#402532;border-color:#7a465d;color:#ffb7c5}.gate-hint{color:#d1a3b4}}
-
-</style></head><body>
-<div id="firstGate" class="first-gate" aria-modal="true" role="dialog" aria-labelledby="gateTitle">
-    <div class="gate-card">
-        <h2 id="gateTitle" class="gate-title">进入前请先确认</h2>
-        <p class="gate-text">此网站链接仅在 Discord 服务器“尾巴镇”发布。请不要二传、转发、搬运到其他平台，也不要截图外传或打包分享链接。请尊重作者和服务器内的使用范围。</p>
-        <div class="gate-author">作者：毫无疑问你就是我的天使</div>
-        <label class="input-group" for="gateInput">请输入确认句后进入</label>
-        <input id="gateInput" class="gate-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" inputmode="text" placeholder="我绝对不会二传，二传穷三代">
-        <button id="gateConfirm" class="btn" type="button">确认进入</button>
-        <div id="gateError" class="gate-error" aria-live="polite"></div>
-    </div>
-</div>
-
-<main class="wrap">
-    <div class="header">
-        <h1>Vibe 转换器</h1>
-        <p class="subtitle">支持 NovelAI 官网 Vibe 与智绘姬 <code>vibe-group</code> JSON 双向转换。</p>
-    </div>
-    
-    <section class="card">
-        <div id="drop" class="drop">
-            <p>拖入 Vibe 文件，或点击选择</p>
-            <button id="pick" class="btn">选择文件</button>
-            <input id="file" type="file" accept=".json,.naiv4vibe,.naiv4vibebundle,application/json">
-        </div>
-        
-        <div class="row">
-            <div class="input-group">
-                <label for="mode">转换方向</label>
-                <select id="mode">
-                    <option value="toZh">NovelAI 官网 Vibe 转智绘姬</option>
-                    <option value="toNai">智绘姬 Vibe 转 NovelAI 官网</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label for="group">导出名称</label>
-                <input id="group" value="" placeholder="例如：角色名或风格名">
-            </div>
-            <div class="input-group strength-field">
-                <label for="ps">默认预设强度</label>
-                <input id="ps" type="number" value="0.6" min="0" max="1" step="0.01">
-            </div>
-        </div>
-        
-        <div id="privacyBox" class="privacy-box">
-            <label class="check-line" for="replacePreview">
-                <input id="replacePreview" type="checkbox">
-                <span>替换预览图片</span>
-            </label>
-            <div class="input-group privacy-text">
-                <label for="previewText">预览图文字</label>
-                <input id="previewText" maxlength="48" value="" placeholder="默认使用导出名称">
-                <p class="hint">默认使用导出名称；也可以在这里单独修改预览图文字。</p>
-            </div>
-        </div>
-
-        <div class="actions">
-            <button id="go" class="btn" disabled>转换并下载</button>
-            <button id="clear" class="btn sec">清空</button>
-        </div>
-        
-        <div id="status" class="status">等待选择文件。</div>
-    </section>
-    
-    <section class="card">
-        <h2>说明</h2>
-        <ul>
-            <li>全程本地处理，不上传文件。</li>
-            <li>官网 bundle 通常只有 encoding，没有原图；转为智绘姬时会自动生成正常尺寸的预览占位图。</li>
-            <li>会把 <code>unknown</code> 编码键改成 SHA-256 哈希键，并补齐 <code>params.information_extracted</code>。</li>
-            <li>转为智绘姬时输出 <code>groups</code>、<code>vibeData</code>、<code>vibePresets</code>、<code>presetImages</code>；转回官网时输出单个 <code>.naiv4vibe</code> 或 bundle。</li>
-            <li>勾选替换预览图片后，会用自定义文字生成新的 512×512 预览图，避免导出文件继续显示原参考图。</li>
-        </ul>
-    </section>
-</main><script>const $=id=>document.getElementById(id),file=$('file'),pick=$('pick'),drop=$('drop'),go=$('go'),clear=$('clear'),st=$('status'),mode=$('mode'),group=$('group'),ps=$('ps'),replacePreview=$('replacePreview'),previewText=$('previewText'),privacyBox=$('privacyBox');let parsed=null,previewTextDirty=false;
-(function(){
-const gate=$('firstGate'),gateInput=$('gateInput'),gateConfirm=$('gateConfirm'),gateError=$('gateError');
-const gateKey='vibeConverterNoRepostConfirmed.v1',gatePhrase='我绝对不会二传，二传穷三代';
-function gateGet(){try{return localStorage.getItem(gateKey)==='1'}catch(e){return false}}
-function gateSet(){try{localStorage.setItem(gateKey,'1')}catch(e){}}
-function openGate(){if(!gate||gateGet())return;gate.classList.add('show');document.body.classList.add('gate-locked');setTimeout(()=>gateInput&&gateInput.focus(),80)}
-function closeGate(){gateSet();gate.classList.remove('show');document.body.classList.remove('gate-locked')}
-function checkGate(){const ok=(gateInput.value||'').trim()===gatePhrase;if(ok)closeGate();else{gateError.textContent='请输入完整确认句后才能进入。';gateInput.focus()}}
-if(gateConfirm)gateConfirm.onclick=checkGate;
-if(gateInput){gateInput.addEventListener('keydown',e=>{if(e.key==='Enter')checkGate();else gateError.textContent=''});['paste','copy','cut','drop','dragover','contextmenu'].forEach(t=>gateInput.addEventListener(t,e=>{e.preventDefault();gateError.textContent='请手动输入确认句，不能复制粘贴。'}));}
-openGate();
-})();
-pick.onclick=()=>file.click();file.onchange=()=>handle(file.files[0]);function defaultPreviewName(){return group.value.trim()||'PRIVATE VIBE'}function syncPreviewText(){if(!previewTextDirty)previewText.value=defaultPreviewName()}function previewName(){return previewText.value.trim()||defaultPreviewName()}function togglePrivacyText(){privacyBox.classList.toggle('active',replacePreview.checked);if(replacePreview.checked)syncPreviewText()}group.addEventListener('input',syncPreviewText);previewText.addEventListener('input',()=>{previewTextDirty=true});replacePreview.onchange=togglePrivacyText;syncPreviewText();togglePrivacyText();clear.onclick=()=>{parsed=null;file.value='';go.disabled=true;replacePreview.checked=false;previewTextDirty=false;previewText.value=defaultPreviewName();togglePrivacyText();msg('等待选择文件。')};go.onclick=run;['dragenter','dragover'].forEach(e=>drop.addEventListener(e,x=>{x.preventDefault();drop.classList.add('drag')}));['dragleave','drop'].forEach(e=>drop.addEventListener(e,x=>{x.preventDefault();drop.classList.remove('drag')}));drop.addEventListener('drop',e=>handle(e.dataTransfer.files[0]));function msg(t,c=''){st.textContent=t;st.className='status '+c}async function handle(f){try{if(!f)return;parsed=JSON.parse(await f.text());let vs=vibes(parsed);if(!vs.length)throw Error('没找到 vibes');go.disabled=false;msg(`已读取：${f.name}
-检测到 ${vs.length} 个 vibe，可转换。`,'ok')}catch(e){parsed=null;go.disabled=true;msg('读取失败：'+e.message,'err')}}function isSingleVibe(d){return !!(d&&typeof d==='object'&&!Array.isArray(d)&&(d.identifier==='novelai-vibe-transfer'||d.encodings)&&!d.groups&&!d.vibeData)}function vibes(d){if(Array.isArray(d?.vibes))return d.vibes;if(isSingleVibe(d))return[d];if(d?.vibeData&&typeof d.vibeData==='object')return Object.values(d.vibeData);return[]}async function sha(s){let b=new TextEncoder().encode(s),d=await crypto.subtle.digest('SHA-256',b);return[...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,'0')).join('')}function uuid(){return crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{let r=Math.random()*16|0,v=c==='x'?r:r&3|8;return v.toString(16)})}function num(v,f){v=Number(v);return Number.isFinite(v)?v:f}function dataUrl(v){return typeof v==='string'&&v.startsWith('data:image/')?v:''}function bare(v){return dataUrl(v)?v.replace(/^data:image\/\w+;base64,/,''):(typeof v==='string'?v:'')}function wrapLines(x,text,maxWidth,maxLines=4){let chars=[...String(text||'PRIVATE VIBE').trim()],lines=[],line='';for(const ch of chars){let test=line+ch;if(x.measureText(test).width>maxWidth&&line){lines.push(line);line=ch;if(lines.length===maxLines-1)break}else line=test}if(line&&lines.length<maxLines)lines.push(line);return lines.length?lines:['PRIVATE VIBE']}function privacyPlaceholder(text,size=512){let c=document.createElement('canvas'),x=c.getContext('2d'),w=size,h=size;c.width=w;c.height=h;let g=x.createLinearGradient(0,0,w,h);g.addColorStop(0,'#fff0f5');g.addColorStop(.5,'#ffd1dc');g.addColorStop(1,'#fff7de');x.fillStyle=g;x.fillRect(0,0,w,h);x.fillStyle='rgba(255,255,255,.72)';x.fillRect(46,46,w-92,h-92);x.strokeStyle='rgba(255,158,181,.62)';x.lineWidth=6;x.strokeRect(46,46,w-92,h-92);x.textAlign='center';x.textBaseline='middle';x.fillStyle='#d81b60';x.font='bold 50px sans-serif';let lines=wrapLines(x,text,w-130,4),lh=58,start=h/2-(lines.length-1)*lh/2;lines.forEach((line,i)=>x.fillText(line,w/2,start+i*lh));x.font='20px sans-serif';x.fillStyle='#9d6477';x.fillText('Private preview',w/2,h-92);return c.toDataURL('image/png')}function privateSingleVibe(d){let img=privacyPlaceholder(previewName()),out=JSON.parse(JSON.stringify(d));out.image=bare(img);out.thumbnail=img;return out}function placeholder(n){let c=document.createElement('canvas'),x=c.getContext('2d'),w=512,h=512;c.width=w;c.height=h;let g=x.createLinearGradient(0,0,w,h);g.addColorStop(0,'#f4e7ff');g.addColorStop(.55,'#dfefff');g.addColorStop(1,'#fff3d8');x.fillStyle=g;x.fillRect(0,0,w,h);x.fillStyle='rgba(255,255,255,.72)';x.fillRect(44,44,424,424);x.strokeStyle='rgba(120,90,170,.35)';x.lineWidth=6;x.strokeRect(44,44,424,424);x.fillStyle='#7453a6';x.textAlign='center';x.textBaseline='middle';x.font='bold 54px sans-serif';x.fillText('VIBE',256,210);x.font='28px sans-serif';let t=(n||'NovelAI Vibe').slice(0,18);x.fillText(t,256,286);x.font='20px sans-serif';x.fillStyle='#8c7aa8';x.fillText('Generated preview',256,338);return c.toDataURL('image/png')}function cleanName(v,f='vibe'){return String(v||f).trim().replace(/[\/:*?"<>|]/g,'_')||f}function isZhihuiji(d){return !!(d&&typeof d==='object'&&!Array.isArray(d)&&d.vibeData&&typeof d.vibeData==='object')}function orderedZhVibes(d){if(!isZhihuiji(d))return[];let used=new Set(),arr=[];for(const g of Object.values(d.groups||{})){for(const item of g?.vibes||[]){let id=typeof item==='string'?item:(item?.vibeDataId||item?.id),v=d.vibeData[id];if(v&&!used.has(id)){arr.push({v,strength:item?.strength});used.add(id)}}}for(const[id,v]of Object.entries(d.vibeData)){if(v&&!used.has(id))arr.push({v,strength:v.importInfo?.strength})}return arr}function toNovelVibe(v,i,strength){let out=JSON.parse(JSON.stringify(v||{}));out.identifier='novelai-vibe-transfer';out.version=num(out.version,1);out.type=out.type||'image';out.image=bare(out.image||out.thumbnail);out.id=out.id||uuid();out.encodings=out.encodings||{};out.name=out.name||`vibe-${i+1}`;let thumb=dataUrl(out.thumbnail)||dataUrl(out.image);if(!thumb&&out.image)thumb='data:image/png;base64,'+bare(out.image);out.thumbnail=thumb;out.createdAt=num(out.createdAt,Date.now());let ii=out.importInfo||{};out.importInfo={model:ii.model||'nai-diffusion-4-5-full',information_extracted:num(ii.information_extracted??ii.infoExtract,1),strength:num(ii.strength,strength??num(ps.value,.6))};return out}function buildNovelAI(d){let items=orderedZhVibes(d);if(!items.length)throw Error('没有找到智绘姬 vibeData');let list=items.map((x,i)=>toNovelVibe(x.v,i,x.strength));return list.length===1?list[0]:{identifier:'novelai-vibe-transfer-bundle',version:1,vibes:list}}async function build(d){let name=(group.value||'未命名Vibe组').trim(),preset=num(ps.value,.6),now=Date.now(),vd={},gv=[],pi={},firstVD='',firstImg='',firstModel='nai-diffusion-4-5-full',firstIE=1,usePrivate=replacePreview.checked,items=d?.vibeData&&typeof d.vibeData==='object'?Object.entries(d.vibeData):vibes(d).map((v,i)=>[String(i),v]),sourceStrength={};for(const g of Object.values(d?.groups||{}))for(const x of g?.vibes||[])if(x?.vibeDataId)sourceStrength[x.vibeDataId]=x.strength;for(let index=0;index<items.length;index++){let[key,v]=items[index],ii=v.importInfo||{},model=ii.model||'nai-diffusion-4-5-full',ie=num(ii.information_extracted,1),strength=num(sourceStrength[key],num(ii.strength,preset)),out={},found=false;for(const[mk,me]of Object.entries(v.encodings||{})){if(!me||typeof me!=='object')continue;out[mk]={};for(const val of Object.values(me)){if(!val||typeof val!=='object'||typeof val.encoding!=='string')continue;let h=await sha(val.encoding);out[mk][h]={encoding:val.encoding,params:{...(val.params||{}),information_extracted:num(val.params?.information_extracted,ie)}};found=true}if(!Object.keys(out[mk]).length)delete out[mk]}if(!found&&typeof v.encoding==='string'){let h=await sha(v.encoding);out['v4-5full']={[h]:{encoding:v.encoding,params:{information_extracted:ie}}};found=true}if(!found)continue;let id='cfgimg_'+uuid(),img='cfgimg_'+uuid(),hid=v.id||await sha(JSON.stringify(out)+ie),nm=v.name||`${hid.slice(0,6)}-${hid.slice(-6)}`,privateImg=usePrivate?privacyPlaceholder(previewName()+(items.length>1?index+1:'')):'',src=usePrivate?privateImg:(dataUrl(v.image)||dataUrl(v.thumbnail)||placeholder(nm)),thumb=usePrivate?privateImg:(dataUrl(v.thumbnail)||src),raw=usePrivate?bare(privateImg):(bare(v.image)||bare(src));vd[id]={identifier:'novelai-vibe-transfer',version:1,type:'image',image:raw,id:hid,encodings:out,name:nm,thumbnail:thumb,createdAt:num(v.createdAt,now),importInfo:{model,information_extracted:ie,strength}};gv.push({vibeDataId:id,strength});pi[img]=src;if(!firstVD){firstVD=id;firstImg=img;firstModel=model;firstIE=ie}}if(!gv.length)throw Error('没有有效 encoding');return{groups:{[name]:{vibes:gv,createdAt:now,updatedAt:now}},vibeData:vd,vibePresets:{[name]:{model:firstModel,infoExtract:firstIE,strength:preset,imageId:firstImg,vibeDataId:firstVD}},presetImages:pi}}function downloadJson(out,fn){let text=JSON.stringify(out,null,2),url=URL.createObjectURL(new Blob([text],{type:'application/json;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download=fn;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url)}async function run(){try{if(!parsed)throw Error('请先选择文件');go.disabled=true;msg('正在转换...');let out,fn;if(mode.value==='toNai'){out=buildNovelAI(parsed);let base=cleanName(group.value||(out.vibes?group.value:out.name)||'novelai-vibe');fn=out.vibes?`${base}.naiv4vibebundle.json`:`${base}.naiv4vibe.json`}else if(replacePreview.checked&&isSingleVibe(parsed)){out=privateSingleVibe(parsed);let base=cleanName(group.value||out.name||out.id||'vibe');fn=`${base}_private_preview.naiv4vibe.json`}else{out=await build(parsed);let name=cleanName(group.value||'vibe-group','vibe-group');fn=`vibe-group-${name}-${Date.now()}.json`}downloadJson(out,fn);msg('转换成功！\n已导出：'+fn,'ok')}catch(e){msg('转换失败：'+e.message,'err')}finally{go.disabled=!parsed}}</script></body></html>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Vibe 转换器新地址</title>
+  <style>
+    :root { color-scheme: light; --ink: #7e4a5d; --pink: #e84a5f; --line: #ffb7c5; }
+    * { box-sizing: border-box; }
+    body { min-height: 100vh; margin: 0; padding: 20px; display: grid; place-items: center; overflow-x: hidden; background: radial-gradient(circle at top right, #fffaf0, #ffd1dc 48%, #fdf2f8); color: var(--ink); font-family: "Nunito", "Quicksand", system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif; }
+    .card { width: min(460px, 100%); padding: 42px 34px 36px; text-align: center; background: rgba(255, 255, 255, 0.88); border: 3px solid var(--line); border-radius: 28px; box-shadow: 0 16px 40px rgba(255, 183, 197, 0.4), inset 0 0 0 4px #fff; backdrop-filter: blur(10px); }
+    .mark { display: grid; place-items: center; width: 58px; height: 58px; margin: 0 auto 18px; border: 2px solid #ffd1dc; border-radius: 18px; background: #fffaf0; box-shadow: 0 8px 20px rgba(255, 183, 197, 0.32); color: #c2185b; font-family: Georgia, serif; font-size: 29px; font-weight: 800; }
+    h1 { margin: 0 0 14px; color: var(--pink); font-size: 28px; line-height: 1.3; letter-spacing: 0; text-shadow: 2px 2px 0 #fff, 4px 4px 0 #ffd1dc; }
+    p { margin: 0 0 26px; color: #9d6477; font-size: 14px; line-height: 1.8; }
+    .button { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 52px; padding: 13px 22px; border: 3px solid #fff; border-radius: 999px; background: linear-gradient(135deg, #ff9eb5, #ffb7c5); box-shadow: 0 8px 20px rgba(255, 158, 181, 0.4); color: #fff; font-size: 16px; font-weight: 800; letter-spacing: 0; text-decoration: none; text-shadow: 0 1px 2px rgba(232, 74, 95, 0.4); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .button:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(255, 158, 181, 0.48), 0 0 0 4px rgba(255, 255, 255, 0.7); }
+    .button:active { transform: translateY(0); }
+    .button:focus-visible { outline: 3px solid #c2185b; outline-offset: 4px; }
+    @media (max-width: 520px) { .card { padding: 34px 22px 29px; border-radius: 24px; } h1 { font-size: 24px; } }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="mark" aria-hidden="true">V</div>
+    <h1>Vibe 转换器已迁移</h1>
+    <p>请前往新版网站继续使用。</p>
+    <a class="button" href="https://vibe-converter-discord.lucia-vibe.workers.dev/">前往新版网站</a>
+  </main>
+</body>
+</html>
